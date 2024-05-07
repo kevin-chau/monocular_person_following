@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 2.8.3)
 project(monocular_person_following)
 
 add_compile_options(-std=c++11)
-
+set (CMAKE_CXX_FLAGS "-g")
 find_package(catkin REQUIRED
   tf
   rospy
@@ -15,6 +15,8 @@ find_package(catkin REQUIRED
   ccf_person_identification
   monocular_people_tracking
 )
+
+find_package(OpenCV 4 REQUIRED)
 
 ########################
 ## service generation ##
@@ -65,4 +67,7 @@ add_executable(monocular_person_following_node
 add_dependencies(monocular_person_following_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 target_link_libraries(monocular_person_following_node
   ${catkin_LIBRARIES}
+  ${OpenCV_LIBRARIES}
+  /lib/aarch64-linux-gnu/liblz4.so
 )
+
