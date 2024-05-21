@@ -157,39 +157,17 @@ class VisualizationNode:
 
 			return (extents[0], extents[1], angle)
 
-		# print("meas_cov")
-		# print(meas_cov)
-		# print("neck_ellipse")
-		# print("meas_cov[:2, :2]")
-		# print(meas_cov[:2, :2])
-		# print("ankle_ellipse")
-		# print("meas_cov[2:, 2:]")
-		# print(meas_cov[2:, 2:])
-		# neck_ellipse = error_ellipse(int(meas_cov[:2, :2]), int(3.0))
-		# ankle_ellipse = error_ellipse(int(meas_cov[2:, 2:]), int(3.0))
 		neck_ellipse = error_ellipse(meas_cov[:2, :2], 3.0)
 		ankle_ellipse = error_ellipse(meas_cov[2:, 2:], 3.0)
 		neck_pos = tuple(meas_mean[:2].astype(numpy.int32))
 		ankle_pos = tuple(meas_mean[2:].astype(numpy.int32))
-		# print("neck_ellipse")
-		# print(neck_ellipse)
-		# print("neck_pos")
-		# print(neck_pos)
-
 		color = self.color_palette[track.id % len(self.color_palette)]
 		color = tuple(int(x) for x in color)
-
 		neck_axes = neck_ellipse[:2]
 		ankle_axes = ankle_ellipse[:2]
-		# print("neck_axes")
-		# print(neck_axes)
-
 		int_neck_axes = [int(axis) for axis in neck_axes]
 		int_ankle_axes = [int(axis) for axis in ankle_axes]
-		# print("int_neck_axes")
-		# print(int_neck_axes)
 
-		# cv2.ellipse(image, neck_pos, neck_ellipse[:2], neck_ellipse[-1], 0, 360, color, 2)
 		cv2.ellipse(image, neck_pos, int_neck_axes, neck_ellipse[-1], 0, 360, color, 2)
 		cv2.ellipse(image, ankle_pos, int_ankle_axes, ankle_ellipse[-1], 0, 360, color, 2)
 		cv2.line(image, neck_pos, ankle_pos, color, 2)
