@@ -94,7 +94,7 @@ public:
         const auto end{std::chrono::steady_clock::now()};
         const std::chrono::duration<double> elapsed_seconds{end - start};
 
-        std::cout << "CCF Feature extraction took: "<< elapsed_seconds << '\n';
+        std::cout << "CCF Feature extraction took: "<< elapsed_seconds.count() << '\n';
 
         State* next_state = state->update(private_nh, *context, tracks);
         if(next_state != state.get()) {
