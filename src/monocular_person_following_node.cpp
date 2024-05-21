@@ -1,6 +1,7 @@
 #include <mutex>
 #include <iostream>
 #include <unordered_map>
+#include <chrono>
 
 #include <Eigen/Dense>
 #include <opencv2/opencv.hpp>
@@ -88,7 +89,12 @@ public:
         }
 
         std::lock_guard<std::mutex> lock(context_mutex);
+        const auto start{std::chrono::steady_clock::now()};
         context->extract_features(cv_image->image, tracks);
+        const auto end{std::chrono::steady_clock::now()};
+        const std::chrono::duration<double> elapsed_seconds{end - start};
+
+        std::cout << "CCF Feature extraction took: "<< elapsed_seconds << '\n';
 
         State* next_state = state->update(private_nh, *context, tracks);
         if(next_state != state.get()) {
