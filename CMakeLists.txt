@@ -67,7 +67,7 @@ add_executable(monocular_person_following_node
 add_dependencies(monocular_person_following_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 target_link_libraries(monocular_person_following_node
   ${catkin_LIBRARIES}
-  ${OpenCV_LIBRARIES}
+  ${OpenCV_LIBS}
   /lib/aarch64-linux-gnu/liblz4.so
 )
 
