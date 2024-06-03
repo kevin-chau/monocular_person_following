@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
 <launch>
-  <arg name="camera_name" default="/csi_cam_0/sd"/>
+  <arg name="camera_name" default="top_front_camera/qhd"/>
 
   <arg name="use_face"    default="false"/>
   <arg name="face_camera_name" default="$(arg camera_name)"/>
-  <arg name="allow_growth" default="false"/>
+  <arg name="allow_growth" default="true"/>
 
   <!-- *** people detection *** -->
   <include file="$(find monocular_people_tracking)/launch/tf_openpose.launch" if="true">
