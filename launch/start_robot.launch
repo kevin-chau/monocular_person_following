@@ -9,11 +9,11 @@
   /// @arg camera_rpy           : camera_rotation w.r.t. base_link
   -->
   <arg name="sim" default="false"/>
-  <arg name="webcam" default="false"/>
+  <arg name="webcam" default="true"/>
   <arg name="rosaria" default="false"/>
-  <arg name="publish_dummy_frames" default="false"/>
-  <arg name="camera_xyz" default="0 0 0.905"/>
-  <arg name="camera_rpy" default="0 0.005 0"/>
+  <arg name="publish_dummy_frames" default="true"/>
+  <arg name="camera_xyz" default="0 0 0.9"/>
+  <arg name="camera_rpy" default="0 0 0"/>
   <arg name="camera_image_width" default="1280"/>
   <arg name="camera_image_height" default="720"/>
 
