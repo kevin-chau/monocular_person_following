@@ -62,6 +62,8 @@ public:
     void callback(const sensor_msgs::ImageConstPtr& image_msg, const monocular_people_tracking::TrackArrayConstPtr& tracks_msg, const monocular_person_following::FaceDetectionArrayConstPtr& faces_msg) {
         auto cv_image = cv_bridge::toCvCopy(image_msg, "bgr8");
 
+        auto start_time = std::chrono::steady_clock::now();
+
         std::unordered_map<long, Tracklet::Ptr> tracks;
 
         std::unordered_map<long, FaceDetection const*> face_msgs;
@@ -141,6 +143,9 @@ public:
                 features_pub.publish(cv_image.toImageMsg());
             }
         }
+        auto end_time = std::chrono::steady_clock::now();
+        auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time).count();
+        ROS_INFO_STREAM("Monocular Person following node callback execution time: " << duration << " ms");
     }
 
     bool imprint_service(ImprintRequest& req, ImprintResponse& res) {
