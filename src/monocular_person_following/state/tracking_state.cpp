@@ -18,7 +18,7 @@ State* TrackingState::update(ros::NodeHandle& nh, Context& context, const std::u
     }
 
     if(!pred || *pred < nh.param<double>("min_target_cofidence", 0.1)) {
-        ROS_INFO_STREAM("do not update");
+        // ROS_INFO_STREAM("do not update");
         return this;
     }
 
