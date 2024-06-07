@@ -2,7 +2,8 @@
 import cv2
 import math
 import numpy
-
+from tf_pose import common
+from tf_pose.estimator import Human, BodyPart
 import tf
 import rospy
 import cv_bridge
@@ -11,10 +12,6 @@ from tfpose_ros.msg import *
 from sensor_msgs.msg import *
 from monocular_people_tracking.msg import *
 from monocular_person_following.msg import *
-
-from tf_pose import common
-from tf_pose.estimator import Human, BodyPart
-
 
 class VisualizationNode:
 	def __init__(self):
