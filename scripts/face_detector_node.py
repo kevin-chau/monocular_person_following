@@ -1,5 +1,4 @@
 #!/usr/bin/python
-import cv2
 import numpy
 import dlib
 import rospy
@@ -9,7 +8,6 @@ from tfpose_ros.msg import *
 from sensor_msgs.msg import *
 from monocular_people_tracking.msg import *
 from monocular_person_following.msg import *
-
 
 class FaceDetectorNode:
 	def __init__(self):

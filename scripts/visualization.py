@@ -77,10 +77,10 @@ class VisualizationNode:
 
 		for track in tracks_msg.tracks:
 			self.draw_expected_measurement(image, track)
-			self.draw_bounding_box(image, track)
 
 			if track.id == self.target_id:
 				self.draw_target_icon(image, track)
+				self.draw_bounding_box(image, track) # Only draw bounding box for the target person
 
 		if faces_msg is not None:
 			face_scale = image_msg.width / float(faces_msg.image_width)
@@ -136,7 +136,6 @@ class VisualizationNode:
 				if pair[0] not in human.body_parts.keys() or pair[1] not in human.body_parts.keys():
 					continue
 
-				# npimg = cv2.line(npimg, centers[pair[0]], centers[pair[1]], common.CocoColors[pair_order], 3)
 				cv2.line(canvas, centers[pair[0]], centers[pair[1]], common.CocoColors[pair_order], 3)
 
 		npimg = npimg / 2 + canvas / 2
@@ -217,7 +216,6 @@ class VisualizationNode:
 			img_msg = cv_bridge.CvBridge().cv2_to_imgmsg(self.image.astype(numpy.uint8), 'bgr8')
 			self.image_pub.publish(img_msg)
 
-
 def main():
 	rospy.init_node('visualization_node')
 	node = VisualizationNode()
@@ -226,7 +224,6 @@ def main():
 	while not rospy.is_shutdown():
 		node.spin()
 		rate.sleep()
-
 
 if __name__ == '__main__':
 	main()
