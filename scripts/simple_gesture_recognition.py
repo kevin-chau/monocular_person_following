@@ -25,7 +25,7 @@ class GestureRecognizer:
 			return
 
 		if r_elbow[0].y < neck[0].y and r_hand[0].y < neck[0].y:
-			print(self.track_id, rospy.Time.now() - self.last_stamp)
+			print("Right Elbow Raised:", self.track_id, rospy.Time.now() - self.last_stamp)
 			if rospy.Time.now() - self.last_stamp > rospy.Duration(5.0):
 				imprint(track_msg.id)
 				self.last_stamp = rospy.Time.now()

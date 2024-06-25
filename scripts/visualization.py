@@ -12,11 +12,14 @@ from tfpose_ros.msg import *
 from sensor_msgs.msg import *
 from monocular_people_tracking.msg import *
 from monocular_person_following.msg import *
+from diogo_code.msg import bounding_box_and_id
 
 class VisualizationNode:
 	def __init__(self):
+		print("INITIALIZING VISUALIZATIONNODE")
 		self.tf_listener = tf.TransformListener()
 		self.image_pub = rospy.Publisher('~visualize', Image, queue_size=1)
+		self.bounding_box_publisher = rospy.Publisher('/monocular_person_following/bounding_box', bounding_box_and_id, queue_size=1)
 
 		color_palette = numpy.uint8([(180 / 10 * i, 255, 255) for i in range(10)]).reshape(-1, 1, 3)
 		self.color_palette = cv2.cvtColor(color_palette, cv2.COLOR_HSV2BGR).reshape(-1, 3)
@@ -62,6 +65,7 @@ class VisualizationNode:
 		self.callback(image_msg, poses_msg, tracks_msg, None)
 
 	def callback(self, image_msg, poses_msg, tracks_msg, faces_msg):
+		print("VISUALIZATION CALLBACK")
 		image = cv_bridge.CvBridge().imgmsg_to_cv2(image_msg, 'bgr8')
 
 		humans = []
@@ -198,6 +202,22 @@ class VisualizationNode:
 		body_confidence = body_confidence + 0.5
 		color = (0, int(255 * body_confidence), int(255 * (1 - body_confidence)))
 		cv2.rectangle(image, tl, br, color, 2)
+
+		# Make a bounding box message
+		bounding_box_message = bounding_box_and_id()
+		bounding_box_message.ID = track.id
+		bounding_box_message.centerx = center[0]/image.shape[1]
+		bounding_box_message.centery = center[1]/image.shape[0]
+		bounding_box_message.deltax = width/image.shape[1]
+		bounding_box_message.deltay = height/image.shape[0]
+		bounding_box_message.h_pix = image.shape[0]
+		bounding_box_message.w_pix = image.shape[1]
+
+		# Draw center point (green circle)
+		cv2.circle(image, (int(center[0]), int(center[1])), radius=10, color=(0,255,0), thickness=-1)
+
+		# Publish message (to diogo code distance_to_person)
+		self.bounding_box_publisher.publish(bounding_box_message)
 
 	def draw_target_icon(self, image, track):
 		neck_ankle = numpy.float32(track.expected_measurement_mean).flatten()
