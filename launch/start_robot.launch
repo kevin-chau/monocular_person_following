@@ -14,22 +14,22 @@
   <arg name="publish_dummy_frames" default="true"/>
   <arg name="camera_xyz" default="0 0 0.9"/>
   <arg name="camera_rpy" default="0 0 0"/>
-  <arg name="camera_image_width" default="1280"/>
-  <arg name="camera_image_height" default="720"/>
+  <!-- <arg name="camera_image_width" default="1280"/>
+  <arg name="camera_image_height" default="720"/> -->
 
-  <include file="$(find monocular_people_tracking)/launch/web_camera.launch" if="$(arg webcam)">
+  <!-- <include file="$(find monocular_people_tracking)/launch/web_camera.launch" if="$(arg webcam)">
     <arg name="sim" value="$(arg sim)"/>
     <arg name="camera_image_width" value="$(arg camera_image_width)"/>
     <arg name="camera_image_height" value="$(arg camera_image_height)"/>
   </include>
   <include file="$(find monocular_people_tracking)/launch/jetson_csi_camera.launch" unless="$(arg webcam)">
     <arg name="sim" value="$(arg sim)"/>
-  </include>
+  </include> -->
 
   <include file="$(find monocular_people_tracking)/launch/robot_frames.launch">
     <arg name="publish_dummy_frames" value="$(arg publish_dummy_frames)"/>
     <arg name="camera_optical_frame" value="csi_cam_0_link" unless="$(arg webcam)"/>
-    <arg name="camera_optical_frame" value="top_front_camera_optical_frame" if="$(arg webcam)"/>
+    <arg name="camera_optical_frame" value="D455F_color_optical_frame" if="$(arg webcam)"/>
     <arg name="camera_xyz" value="$(arg camera_xyz)"/>
     <arg name="camera_rpy" value="$(arg camera_rpy)"/>
   </include>

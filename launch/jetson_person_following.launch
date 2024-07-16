@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <launch>
-  <arg name="camera_name" default="top_front_camera/qhd"/>
+  <arg name="camera_name" default="/D455F"/>
 
   <arg name="use_face"    default="false"/>
   <arg name="face_camera_name" default="$(arg camera_name)"/>
@@ -8,7 +8,7 @@
 
   <!-- *** people detection *** -->
   <include file="$(find monocular_people_tracking)/launch/tf_openpose.launch" if="true">
-    <arg name="image_topic" value="$(arg camera_name)/image_rect"/>
+    <arg name="image_topic" value="$(arg camera_name)/color/image_raw"/>
     <!--
     /// @arg model       : "cmu", "mobilenet_thin", "mobilenet_v2_large", or "mobilenet_v2_small"
     /// @arg resolution  : e.g., "368x368", "432x368", "656x368"
@@ -25,7 +25,7 @@
 
   <!-- *** people tracking *** -->
   <node pkg="monocular_people_tracking" type="monocular_people_tracking_node" name="monocular_people_tracking">
-    <remap from="camera_info" to="$(arg camera_name)/camera_info"/>
+    <remap from="camera_info" to="$(arg camera_name)/color/camera_info"/>
 
     <!-- detection parameters -->
     <param name="detection_confidence_thresh" value="0.1"/>
@@ -48,7 +48,7 @@
   </node>
 
   <!-- *** face detection *** -->
-  <node pkg="monocular_person_following" type="face_detector_node.py" name="face_detector" output="screen" if="$(arg use_face)">
+  <!-- <node pkg="monocular_person_following" type="face_detector_node.py" name="face_detector" output="screen" if="$(arg use_face)">
     <remap from="camera_info" to="$(arg camera_name)/camera_info"/>
     <remap from="image_rect" to="$(arg face_camera_name)/image_rect"/>
 
@@ -56,16 +56,16 @@
     <param name="face_detection_upscale_pyramid" value="1"/>
     <param name="confidence_thresh" value="-0.5"/>
     <param name="face_detection_expantion_scale" value="1.5"/>
-  </node>
+  </node> -->
 
   <!-- *** face feature extraction *** -->
-  <node pkg="open_face_recognition" type="open_face_recognition_node.py" name="open_face_recognition" output="screen" if="$(arg use_face)">
+ <!-- <node pkg="open_face_recognition" type="open_face_recognition_node.py" name="open_face_recognition" output="screen" if="$(arg use_face)">
     <param name="embedding_framework" value="facenet"/>
-  </node>
+  </node> -->
 
   <!-- *** person identification *** -->
   <node pkg="monocular_person_following" type="monocular_person_following_node" name="monocular_person_following" output="screen">
-    <remap from="image" to="$(arg camera_name)/image_rect"/>
+    <remap from="image" to="$(arg camera_name)/color/image_raw"/>
     <param name="use_face" value="$(arg use_face)"/>
     <param name="use_body" value="true"/>
 
@@ -94,7 +94,7 @@
 
   <!-- *** visualization *** -->
   <node pkg="monocular_person_following" type="visualization.py" name="visualization_node" output="screen">
-    <remap from="image_rect" to="$(arg camera_name)/image_rect"/>
+    <remap from="image_rect" to="$(arg camera_name)/color/image_raw"/>
     <param name="show" value="false"/>
     <param name="use_face" value="$(arg use_face)"/>
   </node>
