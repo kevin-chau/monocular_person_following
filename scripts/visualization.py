@@ -13,6 +13,7 @@ from sensor_msgs.msg import *
 from monocular_people_tracking.msg import *
 from monocular_person_following.msg import *
 from diogo_code.msg import bounding_box_and_id
+import subprocess
 
 class VisualizationNode:
 	def __init__(self):
@@ -46,6 +47,11 @@ class VisualizationNode:
 			self.sync.registerCallback(self.callback_wo_face)
 
 	def target_callback(self, target_msg):
+		# Transition into a tracking state
+		if self.state_name != "tracking" and target_msg.state.data == "tracking":
+			# make a beep
+			subprocess.run("echo -ne '\007'", shell = True, executable="/bin/bash")
+
 		self.state_name = target_msg.state.data
 		self.target_id = target_msg.target_id
 
@@ -65,7 +71,6 @@ class VisualizationNode:
 		self.callback(image_msg, poses_msg, tracks_msg, None)
 
 	def callback(self, image_msg, poses_msg, tracks_msg, faces_msg):
-		print("VISUALIZATION CALLBACK")
 		image = cv_bridge.CvBridge().imgmsg_to_cv2(image_msg, 'bgr8')
 
 		humans = []
