@@ -20,7 +20,8 @@ class VisualizationNode:
 		print("INITIALIZING VISUALIZATIONNODE")
 		self.tf_listener = tf.TransformListener()
 		self.image_pub = rospy.Publisher('~visualize', Image, queue_size=1)
-		self.bounding_box_publisher = rospy.Publisher('/monocular_person_following/bounding_box', bounding_box_and_id, queue_size=1)
+		self.target_person_publisher = rospy.Publisher('/monocular_person_following/target_person', bounding_box_and_id, queue_size=1)
+		self.obstacle_person_publisher = rospy.Publisher('/monocular_person_following/obstacle_person', bounding_box_and_id, queue_size=1)
 
 		color_palette = numpy.uint8([(180 / 10 * i, 255, 255) for i in range(10)]).reshape(-1, 1, 3)
 		self.color_palette = cv2.cvtColor(color_palette, cv2.COLOR_HSV2BGR).reshape(-1, 3)
@@ -89,7 +90,7 @@ class VisualizationNode:
 
 			if track.id == self.target_id:
 				self.draw_target_icon(image, track)
-				self.draw_bounding_box(image, track) # Only draw bounding box for the target person
+			self.draw_bounding_box(image, track) # Only draw bounding box for the target person
 
 		if faces_msg is not None:
 			face_scale = image_msg.width / float(faces_msg.image_width)
@@ -222,7 +223,10 @@ class VisualizationNode:
 		cv2.circle(image, (int(center[0]), int(center[1])), radius=10, color=(0,255,0), thickness=-1)
 
 		# Publish message (to diogo code distance_to_person)
-		self.bounding_box_publisher.publish(bounding_box_message)
+		if track.id == self.target_id:
+			self.target_person_publisher.publish(bounding_box_message) # target person
+		else:
+			self.obstacle_person_publisher.publish(bounding_box_message) # not target, so the detected person is an obstacle
 
 	def draw_target_icon(self, image, track):
 		neck_ankle = numpy.float32(track.expected_measurement_mean).flatten()
