@@ -14,6 +14,7 @@ from monocular_people_tracking.msg import *
 from monocular_person_following.msg import *
 from diogo_code.msg import bounding_box_and_id
 import subprocess
+import math
 
 class VisualizationNode:
 	def __init__(self):
@@ -90,7 +91,7 @@ class VisualizationNode:
 
 			if track.id == self.target_id:
 				self.draw_target_icon(image, track)
-			self.draw_bounding_box(image, track) # Only draw bounding box for the target person
+			self.draw_bounding_box(image, track)
 
 		if faces_msg is not None:
 			face_scale = image_msg.width / float(faces_msg.image_width)
@@ -171,11 +172,13 @@ class VisualizationNode:
 		color = tuple(int(x) for x in color)
 		neck_axes = neck_ellipse[:2]
 		ankle_axes = ankle_ellipse[:2]
-		int_neck_axes = [int(axis) for axis in neck_axes]
-		int_ankle_axes = [int(axis) for axis in ankle_axes]
+		int_neck_axes = [int(axis) for axis in neck_axes if not math.isnan(axis)]
+		int_ankle_axes = [int(axis) for axis in ankle_axes if not numpy.isnan(axis)]
 
-		cv2.ellipse(image, neck_pos, int_neck_axes, neck_ellipse[-1], 0, 360, color, 2)
-		cv2.ellipse(image, ankle_pos, int_ankle_axes, ankle_ellipse[-1], 0, 360, color, 2)
+		if not int_neck_axes:
+			cv2.ellipse(image, neck_pos, int_neck_axes, neck_ellipse[-1], 0, 360, color, 2)
+		if not int_ankle_axes:
+			cv2.ellipse(image, ankle_pos, int_ankle_axes, ankle_ellipse[-1], 0, 360, color, 2)
 		cv2.line(image, neck_pos, ankle_pos, color, 2)
 
 	def draw_bounding_box(self, image, track):
@@ -208,6 +211,7 @@ class VisualizationNode:
 		body_confidence = body_confidence + 0.5
 		color = (0, int(255 * body_confidence), int(255 * (1 - body_confidence)))
 		cv2.rectangle(image, tl, br, color, 2)
+		# print("CENTER: ", center[0], center[1])
 
 		# Make a bounding box message
 		bounding_box_message = bounding_box_and_id()
@@ -221,6 +225,7 @@ class VisualizationNode:
 
 		# Draw center point (green circle)
 		cv2.circle(image, (int(center[0]), int(center[1])), radius=10, color=(0,255,0), thickness=-1)
+		cv2.circle(image, (int(center[0]), int(center[1] + image.shape[0]/2)), radius=10, color=(0,255,0), thickness=-1) # point near feet
 
 		# Publish message (to diogo code distance_to_person)
 		if track.id == self.target_id:
